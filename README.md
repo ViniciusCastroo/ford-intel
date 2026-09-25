@@ -16,21 +16,21 @@ O Ford Intel resolve isso com uma **ficha técnica padronizada**: todo veículo 
 
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/01-login.png" width="220" alt="Login"><br><b>Login</b><br>Logo da Ford e acesso do analista</td>
-    <td align="center"><img src="docs/screenshots/02-home-vazia.png" width="220" alt="Home sem buscas"><br><b>Home (primeiro acesso)</b><br>Indicadores, atalho de busca e estado vazio</td>
-    <td align="center"><img src="docs/screenshots/09-home.png" width="220" alt="Home com dados"><br><b>Home</b><br>Buscas recentes com preço FIPE e botão de sair</td>
+    <td align="center"><img src="docs/screenshots/01-login.jpg" width="220" alt="Login"><br><b>Login</b><br>Logo da Ford e acesso do analista</td>
+    <td align="center"><img src="docs/screenshots/02-home.jpg" width="220" alt="Home"><br><b>Home</b><br>Indicadores, atalho de busca e buscas recentes</td>
+    <td align="center"><img src="docs/screenshots/03-busca.jpg" width="220" alt="Busca"><br><b>Busca</b><br>Marca, modelos sugeridos, versão e ano</td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/03-busca.png" width="220" alt="Busca"><br><b>Busca</b><br>Marca, modelos sugeridos, versão e ano</td>
-    <td align="center"><img src="docs/screenshots/04-ficha-topo.png" width="220" alt="Ficha técnica"><br><b>Ficha técnica</b><br>Preço FIPE, completude e seções</td>
-    <td align="center"><img src="docs/screenshots/05-ficha-detalhes.png" width="220" alt="Detalhes da ficha"><br><b>Detalhes da ficha</b><br>Dimensões e eficiência em fonte tabular</td>
+    <td align="center"><img src="docs/screenshots/04-ficha-tecnica.jpg" width="220" alt="Ficha técnica"><br><b>Ficha técnica</b><br>Preço FIPE, completude e seções</td>
+    <td align="center"><img src="docs/screenshots/05-comparacao.jpg" width="220" alt="Comparação"><br><b>Comparação</b><br>Dois veículos lado a lado, vencedor em verde</td>
+    <td align="center"><img src="docs/screenshots/06-historico.jpg" width="220" alt="Histórico"><br><b>Histórico</b><br>Filtros, gráfico de preços, favoritos e exclusão</td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/06-ficha-dados-parciais.png" width="220" alt="Ficha com dados parciais"><br><b>Ficha com dados parciais</b><br>Campos ausentes explícitos e barra de completude</td>
-    <td align="center"><img src="docs/screenshots/07-comparacao.png" width="220" alt="Comparação"><br><b>Comparação</b><br>Dois veículos lado a lado, vencedor em verde</td>
-    <td align="center"><img src="docs/screenshots/08-historico.png" width="220" alt="Histórico"><br><b>Histórico</b><br>Filtros, gráfico de preços, favoritos e exclusão</td>
+    <td align="center"><img src="docs/screenshots/07-alerta.jpg" width="220" alt="Alerta de preço"><br><b>Alerta de preço</b><br>Confirmação e notificação local</td>
   </tr>
 </table>
+
+> **Aviso:** nas capturas de tela, o botão flutuante (toggle) do Expo Go ficou sobre o ícone de sair do cabeçalho. Ele existe apenas no Expo Go e não aparece no app instalado pelo APK.
 
 ## Funcionalidades
 
