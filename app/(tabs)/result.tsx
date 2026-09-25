@@ -1,16 +1,14 @@
-// Ficha técnica completa — seções colapsáveis, todos os campos via SpecRow
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BadgeCategoria, BadgeFonte } from '../../components/ui/Badge';
+import type { IoniconName } from '../../components/ui/icon';
 import { SpecRow } from '../../components/ui/SpecRow';
-import { COLORS } from '../../constants/colors';
+import { COLORS, RADIUS, TYPOGRAPHY } from '../../constants/colors';
 import { useVehicleStore } from '../../store/vehicleStore';
 import { formatarPreco } from '../../utils/format';
 import { requestPermissions } from '../../services/notificationService';
-
-// ─── Seção colapsável ─────────────────────────────────────────────────────────
 
 function Secao({
   titulo,
@@ -19,7 +17,7 @@ function Secao({
   defaultAberta = false,
 }: {
   titulo: string;
-  icone: string;
+  icone: IoniconName;
   children: React.ReactNode;
   defaultAberta?: boolean;
 }) {
@@ -33,7 +31,7 @@ function Secao({
         activeOpacity={0.7}
       >
         <View style={styles.secaoHeaderEsquerda}>
-          <Text style={styles.secaoIcone}>{icone}</Text>
+          <Ionicons name={icone} size={18} color={COLORS.brandLight} />
           <Text style={styles.secaoTitulo}>{titulo}</Text>
         </View>
         <Ionicons
@@ -47,11 +45,9 @@ function Secao({
   );
 }
 
-// ─── Barra de completude ──────────────────────────────────────────────────────
-
 function BarraCompletude({ preenchidos, total }: { preenchidos: number; total: number }) {
   const pct = total > 0 ? preenchidos / total : 0;
-  const cor = pct >= 0.8 ? COLORS.success : pct >= 0.5 ? COLORS.fordYellow : COLORS.error;
+  const cor = pct >= 0.8 ? COLORS.success : pct >= 0.5 ? COLORS.warning : COLORS.error;
 
   return (
     <View style={styles.barraWrap}>
@@ -62,13 +58,11 @@ function BarraCompletude({ preenchidos, total }: { preenchidos: number; total: n
         </Text>
       </View>
       <View style={styles.barraBg}>
-        <View style={[styles.barraFill, { width: `${pct * 100}%` as any, backgroundColor: cor }]} />
+        <View style={[styles.barraFill, { width: `${pct * 100}%`, backgroundColor: cor }]} />
       </View>
     </View>
   );
 }
-
-// ─── Tela ─────────────────────────────────────────────────────────────────────
 
 export default function ResultScreen() {
   const fichaAtual = useVehicleStore((s) => s.fichaAtual);
@@ -96,7 +90,7 @@ export default function ResultScreen() {
   if (!fichaAtual) {
     return (
       <View style={styles.vazio}>
-        <Text style={styles.vazioIcone}>🔍</Text>
+        <Ionicons name="search-outline" size={48} color={COLORS.textMuted} style={styles.vazioIcone} />
         <Text style={styles.vazioTitulo}>Nenhuma ficha carregada</Text>
         <Text style={styles.vazioSub}>Realize uma busca para ver a ficha técnica.</Text>
         <TouchableOpacity style={styles.btnBuscar} onPress={() => router.push('/(tabs)/search')}>
@@ -119,7 +113,6 @@ export default function ResultScreen() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      {/* ── Cabeçalho ── */}
       <View style={styles.cabecalho}>
         <View style={styles.cabecalhoInfo}>
           <Text style={styles.marcaTexto}>{veiculo.marca.toUpperCase()}</Text>
@@ -138,7 +131,6 @@ export default function ResultScreen() {
         </View>
       </View>
 
-      {/* ── Preço FIPE em destaque ── */}
       <View style={styles.precoCard}>
         <Text style={styles.precoLabel}>TABELA FIPE</Text>
         <Text style={styles.precoValor}>{formatarPreco(preco.fipe)}</Text>
@@ -146,21 +138,24 @@ export default function ResultScreen() {
           <Text style={styles.precoRef}>Referência: {preco.referencia}</Text>
         )}
         {metadata.fonte !== 'fipe' && preco.fipe !== null && (
-          <Text style={styles.precoSimulado}>⚠ preço simulado</Text>
+          <View style={styles.precoAviso}>
+            <Ionicons name="alert-circle-outline" size={12} color={COLORS.brandPale} />
+            <Text style={styles.precoSimulado}>preço simulado</Text>
+          </View>
         )}
         {preco.fipe === null && (
-          <Text style={styles.precoSimulado}>preço indisponível na FIPE</Text>
+          <View style={styles.precoAviso}>
+            <Text style={styles.precoSimulado}>preço indisponível na FIPE</Text>
+          </View>
         )}
       </View>
 
-      {/* ── Barra de completude ── */}
       <BarraCompletude
         preenchidos={metadata.campos_preenchidos}
         total={metadata.total_campos}
       />
 
-      {/* ── Seções técnicas ── */}
-      <Secao titulo="Motor & Transmissão" icone="⚙️" defaultAberta>
+      <Secao titulo="Motor & Transmissão" icone="settings-outline" defaultAberta>
         <SpecRow label="Cilindrada" valor={motor.cilindrada} />
         <SpecRow label="Tipo" valor={motor.tipo} />
         <SpecRow label="Potência" valor={motor.potencia_cv} destaque />
@@ -170,7 +165,7 @@ export default function ResultScreen() {
         <SpecRow label="Tração" valor={motor.tracao} ultimo />
       </Secao>
 
-      <Secao titulo="Dimensões & Capacidade" icone="📐">
+      <Secao titulo="Dimensões & Capacidade" icone="resize-outline">
         <SpecRow label="Comprimento" valor={dimensoes.comprimento_mm ? `${dimensoes.comprimento_mm} mm` : null} />
         <SpecRow label="Largura" valor={dimensoes.largura_mm ? `${dimensoes.largura_mm} mm` : null} />
         <SpecRow label="Altura" valor={dimensoes.altura_mm ? `${dimensoes.altura_mm} mm` : null} />
@@ -181,14 +176,14 @@ export default function ResultScreen() {
         <SpecRow label="Reboque" valor={dimensoes.capacidade_reboque_kg ? `${dimensoes.capacidade_reboque_kg} kg` : null} ultimo />
       </Secao>
 
-      <Secao titulo="Eficiência" icone="⛽">
+      <Secao titulo="Eficiência" icone="speedometer-outline">
         <SpecRow label="Consumo cidade" valor={eficiencia.consumo_cidade} />
         <SpecRow label="Consumo estrada" valor={eficiencia.consumo_estrada} />
         <SpecRow label="Tanque" valor={eficiencia.tanque_litros ? `${eficiencia.tanque_litros} L` : null} />
         <SpecRow label="Autonomia estimada" valor={eficiencia.autonomia_km ? `${eficiencia.autonomia_km} km` : null} ultimo />
       </Secao>
 
-      <Secao titulo="Segurança" icone="🛡️">
+      <Secao titulo="Segurança" icone="shield-checkmark-outline">
         <SpecRow label="Airbags" valor={seguranca.airbags} />
         <SpecRow label="ABS" valor={seguranca.abs} />
         <SpecRow label="Controle de estabilidade" valor={seguranca.controle_estabilidade} />
@@ -196,7 +191,7 @@ export default function ResultScreen() {
         <SpecRow label="Assistente de frenagem" valor={seguranca.assistente_frenagem} ultimo />
       </Secao>
 
-      <Secao titulo="Tecnologia" icone="📱">
+      <Secao titulo="Tecnologia" icone="hardware-chip-outline">
         <SpecRow label="Central multimídia" valor={tecnologia.central_multimidia} />
         <SpecRow label="Conectividade" valor={tecnologia.conectividade} />
         <SpecRow label="Câmera de ré" valor={tecnologia.camera_re} />
@@ -204,14 +199,13 @@ export default function ResultScreen() {
         <SpecRow label="Piloto automático" valor={tecnologia.piloto_automatico} ultimo />
       </Secao>
 
-      {/* ── Ações ── */}
       <View style={styles.acoes}>
         <TouchableOpacity
           style={styles.btnAcao}
           onPress={() => adicionarComparacao(0)}
           activeOpacity={0.8}
         >
-          <Ionicons name="git-compare-outline" size={16} color={COLORS.fordBlue} />
+          <Ionicons name="git-compare-outline" size={16} color={COLORS.brandLight} />
           <Text style={styles.btnAcaoTexto}>Comparar (A)</Text>
         </TouchableOpacity>
 
@@ -220,12 +214,11 @@ export default function ResultScreen() {
           onPress={() => adicionarComparacao(1)}
           activeOpacity={0.8}
         >
-          <Ionicons name="git-compare-outline" size={16} color={COLORS.fordBlueMid} />
+          <Ionicons name="git-compare-outline" size={16} color={COLORS.textSecondary} />
           <Text style={styles.btnAcaoTexto}>Comparar (B)</Text>
         </TouchableOpacity>
       </View>
 
-      {/* ── Alerta de preço ── */}
       <TouchableOpacity
         style={[styles.btnAlerta, alertaAtivo && styles.btnAlertaAtivo]}
         onPress={handleToggleAlerta}
@@ -234,7 +227,7 @@ export default function ResultScreen() {
         <Ionicons
           name={alertaAtivo ? 'notifications' : 'notifications-outline'}
           size={18}
-          color={alertaAtivo ? COLORS.black : COLORS.fordYellow}
+          color={alertaAtivo ? COLORS.onAccent : COLORS.accent}
         />
         <Text style={[styles.btnAlertaTexto, alertaAtivo && styles.btnAlertaTextoAtivo]}>
           {alertaAtivo ? 'Alerta ativo — toque para cancelar' : 'Ativar Alerta de Preço'}
@@ -245,34 +238,30 @@ export default function ResultScreen() {
 }
 
 const styles = StyleSheet.create({
-  scroll: { flex: 1, backgroundColor: COLORS.background },
+  scroll: { flex: 1, backgroundColor: COLORS.bg },
   container: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 48 },
 
-  // Vazio
   vazio: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.bg,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 32,
   },
-  vazioIcone: { fontSize: 48, marginBottom: 16 },
+  vazioIcone: { marginBottom: 16 },
   vazioTitulo: { fontSize: 18, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 8, textAlign: 'center' },
   vazioSub: { fontSize: 14, color: COLORS.textSecondary, textAlign: 'center', lineHeight: 20, marginBottom: 24 },
   btnBuscar: {
-    backgroundColor: COLORS.fordYellow,
+    backgroundColor: COLORS.accent,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: RADIUS.lg,
   },
-  btnBuscarTexto: { fontSize: 15, fontWeight: '700', color: COLORS.black },
+  btnBuscarTexto: { fontSize: 15, fontWeight: '700', color: COLORS.onAccent },
 
-  // Cabeçalho
   cabecalho: {
     backgroundColor: COLORS.surface,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
     padding: 16,
     marginBottom: 12,
   },
@@ -280,7 +269,7 @@ const styles = StyleSheet.create({
   marcaTexto: {
     fontSize: 11,
     fontWeight: '700',
-    color: COLORS.fordBlueMid,
+    color: COLORS.brandPale,
     letterSpacing: 1.5,
     marginBottom: 4,
   },
@@ -289,10 +278,9 @@ const styles = StyleSheet.create({
   anoTexto: { fontSize: 13, color: COLORS.textMuted },
   cabecalhoBadges: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
 
-  // Badge simulado
   badgeSimulado: {
-    backgroundColor: 'rgba(245,158,11,0.15)',
-    borderRadius: 4,
+    backgroundColor: COLORS.warningSoft,
+    borderRadius: RADIUS.xs,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderWidth: 1,
@@ -300,31 +288,29 @@ const styles = StyleSheet.create({
   },
   badgeSimuladoTexto: { fontSize: 10, fontWeight: '700', color: COLORS.warning },
 
-  // Preço
   precoCard: {
-    backgroundColor: COLORS.fordBlue,
-    borderRadius: 10,
-    padding: 16,
+    backgroundColor: COLORS.brand,
+    borderRadius: RADIUS.lg,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
     marginBottom: 12,
     alignItems: 'center',
   },
   precoLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: 'rgba(255,255,255,0.6)',
+    color: COLORS.brandPale,
     letterSpacing: 1.5,
-    marginBottom: 4,
+    marginBottom: 6,
   },
-  precoValor: { fontSize: 28, fontWeight: '800', color: COLORS.fordYellow },
-  precoRef: { fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 4 },
-  precoSimulado: { fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 6, fontStyle: 'italic' },
+  precoValor: { ...TYPOGRAPHY.numeric, fontSize: 34, fontWeight: '800', color: COLORS.white },
+  precoRef: { fontSize: 11, color: COLORS.brandPale, marginTop: 6 },
+  precoAviso: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 },
+  precoSimulado: { fontSize: 10, color: COLORS.brandPale, fontStyle: 'italic' },
 
-  // Completude
   barraWrap: {
     backgroundColor: COLORS.surface,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
     padding: 14,
     marginBottom: 16,
   },
@@ -333,18 +319,15 @@ const styles = StyleSheet.create({
   barraPct: { fontSize: 12, fontWeight: '700' },
   barraBg: {
     height: 6,
-    backgroundColor: COLORS.surfaceAlt,
-    borderRadius: 3,
+    backgroundColor: COLORS.surfaceElevated,
+    borderRadius: RADIUS.pill,
     overflow: 'hidden',
   },
-  barraFill: { height: 6, borderRadius: 3 },
+  barraFill: { height: 6, borderRadius: RADIUS.pill },
 
-  // Seções
   secao: {
     backgroundColor: COLORS.surface,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
     marginBottom: 10,
     overflow: 'hidden',
   },
@@ -355,16 +338,14 @@ const styles = StyleSheet.create({
     padding: 14,
   },
   secaoHeaderEsquerda: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  secaoIcone: { fontSize: 16 },
   secaoTitulo: { fontSize: 14, fontWeight: '700', color: COLORS.textPrimary },
   secaoCorpo: {
     paddingHorizontal: 14,
     paddingBottom: 4,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: COLORS.border,
+    borderTopColor: COLORS.divider,
   },
 
-  // Ações
   acoes: { flexDirection: 'row', gap: 10, marginTop: 8 },
   btnAcao: {
     flex: 1,
@@ -373,30 +354,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
     backgroundColor: COLORS.surface,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    paddingVertical: 12,
+    borderRadius: RADIUS.sm,
+    paddingVertical: 14,
   },
   btnAcaoTexto: { fontSize: 13, fontWeight: '600', color: COLORS.textPrimary },
 
-  // Alerta de preço
   btnAlerta: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
     marginTop: 10,
-    paddingVertical: 14,
-    borderRadius: 8,
+    paddingVertical: 16,
+    borderRadius: RADIUS.lg,
     borderWidth: 1.5,
-    borderColor: COLORS.fordYellow,
+    borderColor: COLORS.accent,
     backgroundColor: 'transparent',
   },
   btnAlertaAtivo: {
-    backgroundColor: COLORS.fordYellow,
-    borderColor: COLORS.fordYellow,
+    backgroundColor: COLORS.accent,
+    borderColor: COLORS.accent,
   },
-  btnAlertaTexto: { fontSize: 14, fontWeight: '700', color: COLORS.fordYellow },
-  btnAlertaTextoAtivo: { color: COLORS.black },
+  btnAlertaTexto: { fontSize: 14, fontWeight: '700', color: COLORS.accent },
+  btnAlertaTextoAtivo: { color: COLORS.onAccent },
 });

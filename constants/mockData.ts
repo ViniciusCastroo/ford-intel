@@ -1,7 +1,5 @@
 import type { TechSpecSheet } from '../types/vehicle';
 
-// ─── Ford Ranger Raptor 2024 — veículo de validação obrigatória ───────────────
-
 export const RANGER_RAPTOR: TechSpecSheet = {
   id: 'ford-ranger-raptor-2024',
   createdAt: new Date().toISOString(),
@@ -14,8 +12,6 @@ export const RANGER_RAPTOR: TechSpecSheet = {
   preco: { fipe: 340000, referencia: 'Abril/2026' },
   metadata: { fonte: 'mock', campos_preenchidos: 28, total_campos: 28, is_simulado: false },
 };
-
-// ─── Toyota Hilux GR Sport 2024 ───────────────────────────────────────────────
 
 export const HILUX_GR_SPORT: TechSpecSheet = {
   id: 'toyota-hilux-gr-sport-2024',
@@ -30,8 +26,6 @@ export const HILUX_GR_SPORT: TechSpecSheet = {
   metadata: { fonte: 'mock', campos_preenchidos: 28, total_campos: 28, is_simulado: false },
 };
 
-// ─── Volkswagen Amarok Aventura V6 2024 ───────────────────────────────────────
-
 export const AMAROK_V6: TechSpecSheet = {
   id: 'vw-amarok-v6-2024',
   createdAt: new Date().toISOString(),
@@ -44,8 +38,6 @@ export const AMAROK_V6: TechSpecSheet = {
   preco: { fipe: 430000, referencia: 'Abril/2026' },
   metadata: { fonte: 'mock', campos_preenchidos: 28, total_campos: 28, is_simulado: false },
 };
-
-// ─── Mitsubishi L200 Triton Sport HPE 2024 ───────────────────────────────────
 
 export const L200_TRITON: TechSpecSheet = {
   id: 'mitsubishi-l200-triton-2024',
@@ -60,8 +52,6 @@ export const L200_TRITON: TechSpecSheet = {
   metadata: { fonte: 'mock', campos_preenchidos: 28, total_campos: 28, is_simulado: false },
 };
 
-// ─── Chevrolet S10 High Country 2024 ─────────────────────────────────────────
-
 export const S10_HIGH_COUNTRY: TechSpecSheet = {
   id: 'chevrolet-s10-high-country-2024',
   createdAt: new Date().toISOString(),
@@ -74,8 +64,6 @@ export const S10_HIGH_COUNTRY: TechSpecSheet = {
   preco: { fipe: 280000, referencia: 'Abril/2026' },
   metadata: { fonte: 'mock', campos_preenchidos: 28, total_campos: 28, is_simulado: false },
 };
-
-// ─── RAM 1500 Laramie 2024 ────────────────────────────────────────────────────
 
 export const RAM_1500: TechSpecSheet = {
   id: 'ram-1500-laramie-2024',
@@ -90,8 +78,6 @@ export const RAM_1500: TechSpecSheet = {
   metadata: { fonte: 'mock', campos_preenchidos: 28, total_campos: 28, is_simulado: false },
 };
 
-// ─── Toyota Corolla Cross XRE 2024 ───────────────────────────────────────────
-
 export const COROLLA_CROSS: TechSpecSheet = {
   id: 'toyota-corolla-cross-xre-2024',
   createdAt: new Date().toISOString(),
@@ -104,8 +90,6 @@ export const COROLLA_CROSS: TechSpecSheet = {
   preco: { fipe: 195000, referencia: 'Abril/2026' },
   metadata: { fonte: 'mock', campos_preenchidos: 27, total_campos: 28, is_simulado: false },
 };
-
-// ─── Honda CR-V Touring 2024 ──────────────────────────────────────────────────
 
 export const CRV_TOURING: TechSpecSheet = {
   id: 'honda-crv-touring-2024',
@@ -120,8 +104,6 @@ export const CRV_TOURING: TechSpecSheet = {
   metadata: { fonte: 'mock', campos_preenchidos: 27, total_campos: 28, is_simulado: false },
 };
 
-// ─── Hyundai Tucson GLS 2024 ──────────────────────────────────────────────────
-
 export const TUCSON_GLS: TechSpecSheet = {
   id: 'hyundai-tucson-gls-2024',
   createdAt: new Date().toISOString(),
@@ -134,8 +116,6 @@ export const TUCSON_GLS: TechSpecSheet = {
   preco: { fipe: 198000, referencia: 'Abril/2026' },
   metadata: { fonte: 'mock', campos_preenchidos: 27, total_campos: 28, is_simulado: false },
 };
-
-// ─── Jeep Compass Overland 2024 ───────────────────────────────────────────────
 
 export const COMPASS_OVERLAND: TechSpecSheet = {
   id: 'jeep-compass-overland-2024',
@@ -150,8 +130,6 @@ export const COMPASS_OVERLAND: TechSpecSheet = {
   metadata: { fonte: 'mock', campos_preenchidos: 27, total_campos: 28, is_simulado: false },
 };
 
-// ─── Nissan Frontier PRO-4X 2024 ─────────────────────────────────────────────
-
 export const FRONTIER_PRO4X: TechSpecSheet = {
   id: 'nissan-frontier-pro4x-2024',
   createdAt: new Date().toISOString(),
@@ -165,8 +143,6 @@ export const FRONTIER_PRO4X: TechSpecSheet = {
   metadata: { fonte: 'mock', campos_preenchidos: 28, total_campos: 28, is_simulado: false },
 };
 
-// ─── Ford Bronco Sport Badlands 2024 ─────────────────────────────────────────
-
 export const BRONCO_SPORT: TechSpecSheet = {
   id: 'ford-bronco-sport-badlands-2024',
   createdAt: new Date().toISOString(),
@@ -179,8 +155,6 @@ export const BRONCO_SPORT: TechSpecSheet = {
   preco: { fipe: 299000, referencia: 'Abril/2026' },
   metadata: { fonte: 'mock', campos_preenchidos: 27, total_campos: 28, is_simulado: false },
 };
-
-// ─── Índice de todos os mocks — usado pelo specService ───────────────────────
 
 export const TODOS_OS_MOCKS: TechSpecSheet[] = [
   RANGER_RAPTOR,

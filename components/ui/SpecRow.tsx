@@ -1,21 +1,21 @@
-// Linha de dado técnico — núcleo visual da ficha padronizada
-// REGRA: valor null → sempre "Não disponível" em cinza via formatarValor()
-
 import { StyleSheet, Text, View } from 'react-native';
-import { COLORS } from '../../constants/colors';
+import { COLORS, TYPOGRAPHY } from '../../constants/colors';
 import { formatarValor } from '../../utils/format';
 import type { SpecValue } from '../../types/vehicle';
 
 interface SpecRowProps {
   label: string;
   valor: SpecValue;
-  destaque?: boolean;  // amarelo Ford para campos importantes
-  ultimo?: boolean;    // omite linha divisória no último item da seção
+  destaque?: boolean;
+  ultimo?: boolean;
 }
 
 export function SpecRow({ label, valor, destaque = false, ultimo = false }: SpecRowProps) {
   const valorFormatado = formatarValor(valor);
   const isNaoDisponivel = valor === null || valor === undefined || valor === '';
+  const isNumerico =
+    typeof valor === 'number' ||
+    (typeof valor === 'string' && /^\d[\d.,]*\s?(mm|kg|km\/l|km|cv|nm|l)?$/i.test(valor.trim()));
 
   return (
     <View style={[styles.row, !ultimo && styles.divisor]}>
@@ -23,8 +23,9 @@ export function SpecRow({ label, valor, destaque = false, ultimo = false }: Spec
       <Text
         style={[
           styles.valor,
+          isNumerico && TYPOGRAPHY.numeric,
           isNaoDisponivel && styles.valorNulo,
-          destaque && styles.valorDestaque,
+          destaque && !isNaoDisponivel && styles.valorDestaque,
         ]}
         numberOfLines={2}
       >
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
   },
   divisor: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: COLORS.divider,
   },
   label: {
     flex: 1,
@@ -57,7 +58,6 @@ const styles = StyleSheet.create({
   valor: {
     flex: 1.2,
     fontSize: 13,
-    fontFamily: 'monospace',
     fontWeight: '500',
     color: COLORS.textPrimary,
     textAlign: 'right',
@@ -66,11 +66,11 @@ const styles = StyleSheet.create({
   valorNulo: {
     color: COLORS.textMuted,
     fontStyle: 'italic',
-    fontFamily: undefined,
     fontSize: 12,
+    paddingRight: 2,
   },
   valorDestaque: {
-    color: COLORS.fordYellow,
+    fontSize: 15,
     fontWeight: '700',
   },
 });

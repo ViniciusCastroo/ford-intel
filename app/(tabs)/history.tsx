@@ -1,21 +1,20 @@
-// Histórico completo — filtros, gráfico de barras puro, favorito, delete
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-  Alert,
   FlatList,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { COLORS } from '../../constants/colors';
+import type { IoniconName } from '../../components/ui/icon';
+import { COLORS, RADIUS, TYPOGRAPHY } from '../../constants/colors';
 import { useVehicleStore } from '../../store/vehicleStore';
+import { confirmar } from '../../utils/confirm';
 import { formatarData, formatarPreco } from '../../utils/format';
 import type { BuscaSalva, VehicleCategory } from '../../types/vehicle';
-
-// ─── Gráfico de barras (pure Views) ─────────────────────────────────────────
 
 function GraficoBarras({
   fichas,
@@ -48,7 +47,7 @@ function GraficoBarras({
                 <View
                   style={[
                     styles.barra,
-                    { height: `${Math.max(pct, 5)}%` as any },
+                    { height: `${Math.max(pct, 5)}%` },
                     isFord ? styles.barraFord : styles.barraNormal,
                   ]}
                 />
@@ -61,16 +60,14 @@ function GraficoBarras({
         })}
       </View>
       <View style={styles.graficoLegenda}>
-        <View style={[styles.legendaDot, { backgroundColor: COLORS.fordYellow }]} />
+        <View style={[styles.legendaDot, { backgroundColor: COLORS.brandLight }]} />
         <Text style={styles.legendaTexto}>Ford</Text>
-        <View style={[styles.legendaDot, { backgroundColor: COLORS.fordBlueMid }]} />
+        <View style={[styles.legendaDot, { backgroundColor: COLORS.chartNeutral }]} />
         <Text style={styles.legendaTexto}>Concorrente</Text>
       </View>
     </View>
   );
 }
-
-// ─── Item da lista ────────────────────────────────────────────────────────────
 
 function ItemHistorico({
   item,
@@ -97,15 +94,27 @@ function ItemHistorico({
       <View style={styles.itemDireita}>
         <Text style={styles.itemPreco}>{formatarPreco(item.ficha.preco.fipe)}</Text>
         <View style={styles.itemAcoes}>
-          <TouchableOpacity onPress={onFavorito} hitSlop={8} style={styles.iconBtn}>
+          <TouchableOpacity
+            onPress={onFavorito}
+            hitSlop={8}
+            style={styles.iconBtn}
+            accessibilityRole="button"
+            accessibilityLabel={item.favorito ? 'Remover dos favoritos' : 'Favoritar'}
+          >
             <Ionicons
               name={item.favorito ? 'star' : 'star-outline'}
               size={20}
-              color={item.favorito ? COLORS.fordYellow : COLORS.textMuted}
+              color={item.favorito ? COLORS.accent : COLORS.textMuted}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={onDelete} hitSlop={8} style={styles.iconBtn}>
-            <Ionicons name="trash-outline" size={20} color={COLORS.error} />
+          <TouchableOpacity
+            onPress={onDelete}
+            hitSlop={8}
+            style={styles.iconBtn}
+            accessibilityRole="button"
+            accessibilityLabel="Excluir ficha"
+          >
+            <Ionicons name="trash-outline" size={20} color={COLORS.danger} />
           </TouchableOpacity>
         </View>
       </View>
@@ -113,13 +122,11 @@ function ItemHistorico({
   );
 }
 
-// ─── Tela ─────────────────────────────────────────────────────────────────────
-
 type Filtro = 'todos' | 'favoritos' | VehicleCategory;
 
-const FILTROS: { id: Filtro; label: string }[] = [
+const FILTROS: { id: Filtro; label: string; icone?: IoniconName }[] = [
   { id: 'todos', label: 'Todos' },
-  { id: 'favoritos', label: '⭐ Favoritos' },
+  { id: 'favoritos', label: 'Favoritos', icone: 'star-outline' },
   { id: 'pickup', label: 'Pickups' },
   { id: 'suv', label: 'SUVs' },
   { id: 'sedan', label: 'Sedans' },
@@ -141,13 +148,12 @@ export default function HistoryScreen() {
   });
 
   function handleDelete(item: BuscaSalva) {
-    Alert.alert(
+    confirmar(
       'Excluir ficha',
       `Remover ${item.ficha.veiculo.marca} ${item.ficha.veiculo.modelo} do histórico?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Excluir', style: 'destructive', onPress: () => removerFicha(item.id) },
-      ],
+      'Excluir',
+      () => removerFicha(item.id),
+      true,
     );
   }
 
@@ -158,8 +164,12 @@ export default function HistoryScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Filtros */}
-      <View style={styles.filtrosWrap}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.filtrosScroll}
+        contentContainerStyle={styles.filtrosWrap}
+      >
         {FILTROS.map((f) => {
           const count = f.id === 'todos'
             ? fichas.length
@@ -174,13 +184,20 @@ export default function HistoryScreen() {
               onPress={() => setFiltro(f.id)}
               activeOpacity={0.7}
             >
+              {f.icone && (
+                <Ionicons
+                  name={f.icone}
+                  size={13}
+                  color={filtro === f.id ? COLORS.onAccent : COLORS.textSecondary}
+                />
+              )}
               <Text style={[styles.chipTexto, filtro === f.id && styles.chipTextoAtivo]}>
                 {f.label} ({count})
               </Text>
             </TouchableOpacity>
           );
         })}
-      </View>
+      </ScrollView>
 
       <FlatList
         data={fichasFiltradas}
@@ -198,7 +215,12 @@ export default function HistoryScreen() {
         )}
         ListEmptyComponent={
           <View style={styles.vazio}>
-            <Text style={styles.vazioIcone}>{filtro === 'favoritos' ? '⭐' : '📋'}</Text>
+            <Ionicons
+              name={filtro === 'favoritos' ? 'star-outline' : 'document-text-outline'}
+              size={48}
+              color={COLORS.textMuted}
+              style={styles.vazioIcone}
+            />
             <Text style={styles.vazioTitulo}>
               {filtro === 'favoritos' ? 'Nenhum favorito' : 'Histórico vazio'}
             </Text>
@@ -215,37 +237,38 @@ export default function HistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
+  container: { flex: 1, backgroundColor: COLORS.bg },
 
-  // Filtros
+  filtrosScroll: {
+    flexGrow: 0,
+    flexShrink: 0,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: COLORS.divider,
+  },
   filtrosWrap: {
     flexDirection: 'row',
     gap: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
   },
   chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
   },
-  chipAtivo: { backgroundColor: COLORS.fordYellow, borderColor: COLORS.fordYellow },
+  chipAtivo: { backgroundColor: COLORS.accent },
   chipTexto: { fontSize: 12, fontWeight: '600', color: COLORS.textSecondary },
-  chipTextoAtivo: { color: COLORS.black },
+  chipTextoAtivo: { color: COLORS.onAccent },
 
-  // Gráfico
   grafico: {
     margin: 16,
     marginBottom: 4,
     backgroundColor: COLORS.surface,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
     padding: 14,
   },
   graficoTitulo: {
@@ -263,9 +286,9 @@ const styles = StyleSheet.create({
   },
   barraItem: { flex: 1, alignItems: 'center', height: '100%' },
   barraWrap: { flex: 1, width: '100%', justifyContent: 'flex-end' },
-  barra: { width: '100%', borderRadius: 3 },
-  barraFord: { backgroundColor: COLORS.fordYellow },
-  barraNormal: { backgroundColor: COLORS.fordBlue },
+  barra: { width: '100%', borderRadius: RADIUS.xs },
+  barraFord: { backgroundColor: COLORS.brandLight },
+  barraNormal: { backgroundColor: COLORS.chartNeutral },
   barraLabel: {
     fontSize: 9,
     color: COLORS.textMuted,
@@ -274,15 +297,13 @@ const styles = StyleSheet.create({
     lineHeight: 11,
   },
   graficoLegenda: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10 },
-  legendaDot: { width: 8, height: 8, borderRadius: 4 },
+  legendaDot: { width: 8, height: 8, borderRadius: RADIUS.pill },
   legendaTexto: { fontSize: 10, color: COLORS.textMuted, marginRight: 8 },
 
-  // Lista
   listaConteudo: { paddingBottom: 48 },
   vazioFlex: { flex: 1, justifyContent: 'center' },
-  separador: { height: StyleSheet.hairlineWidth, backgroundColor: COLORS.border, marginLeft: 16 },
+  separador: { height: StyleSheet.hairlineWidth, backgroundColor: COLORS.divider, marginLeft: 16 },
 
-  // Item
   item: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -303,13 +324,12 @@ const styles = StyleSheet.create({
   itemVersao: { fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
   itemData: { fontSize: 11, color: COLORS.textMuted, marginTop: 4 },
   itemDireita: { alignItems: 'flex-end', gap: 8 },
-  itemPreco: { fontSize: 13, fontWeight: '700', color: COLORS.fordYellow },
+  itemPreco: { ...TYPOGRAPHY.numeric, fontSize: 13, fontWeight: '700', color: COLORS.textPrimary },
   itemAcoes: { flexDirection: 'row', gap: 8 },
   iconBtn: { padding: 4 },
 
-  // Vazio
   vazio: { alignItems: 'center', paddingVertical: 48, paddingHorizontal: 32 },
-  vazioIcone: { fontSize: 48, marginBottom: 16 },
+  vazioIcone: { marginBottom: 16 },
   vazioTitulo: { fontSize: 18, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 8 },
   vazioSub: { fontSize: 13, color: COLORS.textSecondary, textAlign: 'center', lineHeight: 20 },
 });

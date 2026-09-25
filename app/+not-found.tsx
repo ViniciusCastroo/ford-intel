@@ -17,7 +17,7 @@ export default function NotFound() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.background },
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.bg },
   title: { fontSize: 20, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 16 },
-  link: { color: COLORS.fordYellow },
+  link: { color: COLORS.accent },
 });

@@ -1,4 +1,3 @@
-// Root layout — configura navegação e restaura sessão ao iniciar
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -21,13 +20,13 @@ export default function RootLayout() {
 
   return (
     <>
-      <StatusBar style="light" backgroundColor={COLORS.background} />
+      <StatusBar style="light" />
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: COLORS.surface },
           headerTintColor: COLORS.textPrimary,
           headerTitleStyle: { fontWeight: '700', fontSize: 16 },
-          contentStyle: { backgroundColor: COLORS.background },
+          contentStyle: { backgroundColor: COLORS.bg },
           headerShadowVisible: false,
           animation: 'fade',
         }}

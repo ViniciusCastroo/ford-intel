@@ -1,28 +1,31 @@
-// Tab navigator — 4 abas visíveis + result oculta
 import { Ionicons } from '@expo/vector-icons';
 import { router, Tabs } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FordLogo } from '../../components/ui/FordLogo';
+import { LogoutButton } from '../../components/ui/LogoutButton';
 import { COLORS } from '../../constants/colors';
 
-type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
-
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: COLORS.fordYellow,
+        tabBarActiveTintColor: COLORS.accent,
         tabBarInactiveTintColor: COLORS.textMuted,
         tabBarStyle: {
           backgroundColor: COLORS.surface,
-          borderTopColor: COLORS.border,
+          borderTopColor: COLORS.divider,
           borderTopWidth: 1,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 6,
+          height: 70 + insets.bottom,
+          paddingBottom: 8 + insets.bottom,
+          paddingTop: 8,
         },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
-        headerStyle: { backgroundColor: COLORS.surface },
+        headerStyle: { backgroundColor: COLORS.brand },
         headerTintColor: COLORS.textPrimary,
+        headerRight: () => <LogoutButton />,
         headerTitleStyle: { fontWeight: '700', fontSize: 16 },
         headerShadowVisible: false,
       }}
@@ -34,7 +37,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'home' : 'home-outline'} size={22} color={color} />
           ),
-          headerTitle: 'Ford Intel',
+          headerTitle: () => <FordLogo height={30} />,
         }}
       />
       <Tabs.Screen
@@ -67,7 +70,6 @@ export default function TabLayout() {
           headerTitle: 'Histórico',
         }}
       />
-      {/* Tela de resultado — oculta da tab bar */}
       <Tabs.Screen
         name="result"
         options={{

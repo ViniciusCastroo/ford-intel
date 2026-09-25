@@ -1,11 +1,9 @@
-// Lista de marcas disponíveis para chips de sugestão
 export const MARCAS = [
   'Ford', 'Toyota', 'Volkswagen', 'Chevrolet', 'Honda',
   'Hyundai', 'Nissan', 'Mitsubishi', 'RAM', 'Jeep',
   'Renault', 'Fiat', 'Mercedes-Benz', 'Land Rover',
 ];
 
-// Modelos agrupados por marca — para sugestões rápidas
 export const VEICULOS_POR_MARCA: Record<string, string[]> = {
   'Ford': ['Ranger Raptor', 'Ranger XLS', 'Bronco Sport', 'Territory', 'Maverick'],
   'Toyota': ['Hilux GR Sport', 'Hilux SRV', 'SW4', 'Corolla Cross', 'RAV4', 'Land Cruiser'],

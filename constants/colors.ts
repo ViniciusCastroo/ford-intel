@@ -1,33 +1,55 @@
-// Paleta de cores Ford Intel — tema escuro premium
+import { Platform, type TextStyle } from 'react-native';
+
 export const COLORS = {
-  // Fundos
-  background: '#080C14',
-  surface: '#0D1420',
-  surfaceAlt: '#131B2B',
-  card: '#1A2438',
+  bg: '#030C19',
+  surface: '#021633',
+  surfaceElevated: '#01224F',
+  divider: '#092C53',
 
-  // Bordas
-  border: '#1E2D47',
-  borderLight: '#243552',
+  textPrimary: '#EAF2FB',
+  textSecondary: '#94BBDD',
+  textMuted: '#5D97C2',
 
-  // Texto
-  textPrimary: '#E8EDF5',
-  textSecondary: '#8A9BB5',
-  textMuted: '#4A5A74',
+  accent: '#F0C000',
+  onAccent: '#000000',
+  onAccentMuted: 'rgba(0,0,0,0.6)',
 
-  // Marca Ford
-  fordBlue: '#003478',
-  fordBlueMid: '#0077C8',
-  fordYellow: '#F0C000',   // usar com moderação: CTAs, preços, tab ativa
-  fordRed: '#E5001B',
+  danger: '#EF4444',
 
-  // Status
   success: '#22C55E',
-  error: '#EF4444',
   warning: '#F59E0B',
+  warningSoft: 'rgba(245,158,11,0.15)',
+  error: '#EF4444',
 
-  // Utilitários
+  brand: '#003785',
+  brandMid: '#1465BB',
+  brandLight: '#2196F3',
+  brandPale: '#81C9FA',
+  chartNeutral: '#4A6C94',
+
+  category: {
+    pickup: '#2196F3',
+    suv: '#16A34A',
+    sedan: '#7C3AED',
+    hatch: '#0891B2',
+    outro: '#3B5F86',
+  },
+
   white: '#FFFFFF',
-  black: '#000000',
   transparent: 'transparent',
 } as const;
+
+export const RADIUS = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  pill: 999,
+} as const;
+
+export const TYPOGRAPHY: { numeric: TextStyle } = {
+  numeric: {
+    fontFamily: Platform.select({ ios: 'Menlo', default: 'monospace' }),
+    fontVariant: ['tabular-nums'],
+  },
+};

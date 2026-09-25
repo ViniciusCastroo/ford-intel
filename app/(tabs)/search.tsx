@@ -1,4 +1,4 @@
-// Busca de veículo — chips de marca, lista de modelos, inputs, call à specService
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { COLORS } from '../../constants/colors';
+import { COLORS, RADIUS } from '../../constants/colors';
 import { MARCAS, VEICULOS_POR_MARCA } from '../../constants/vehicles';
 import { gerarFicha } from '../../services/specService';
 import { useVehicleStore } from '../../store/vehicleStore';
@@ -71,7 +71,6 @@ export default function SearchScreen() {
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
     >
-      {/* ── Marca ── */}
       <Text style={styles.secaoLabel}>MARCA</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll}>
         <View style={styles.chipsRow}>
@@ -98,7 +97,6 @@ export default function SearchScreen() {
       />
       {erros.marca && <Text style={styles.erroTexto}>{erros.marca}</Text>}
 
-      {/* ── Modelos sugeridos ── */}
       {modelosSugeridos.length > 0 && (
         <>
           <Text style={[styles.secaoLabel, { marginTop: 20 }]}>MODELOS SUGERIDOS</Text>
@@ -106,6 +104,8 @@ export default function SearchScreen() {
             data={modelosSugeridos}
             keyExtractor={(item) => item}
             scrollEnabled={false}
+            style={styles.modelosLista}
+            ItemSeparatorComponent={() => <View style={styles.modeloSeparador} />}
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={[styles.modeloItem, modelo === item && styles.modeloItemAtivo]}
@@ -115,14 +115,13 @@ export default function SearchScreen() {
                 <Text style={[styles.modeloTexto, modelo === item && styles.modeloTextoAtivo]}>
                   {item}
                 </Text>
-                {modelo === item && <Text style={styles.checkmark}>✓</Text>}
+                {modelo === item && <Ionicons name="checkmark" size={18} color={COLORS.accent} />}
               </TouchableOpacity>
             )}
           />
         </>
       )}
 
-      {/* ── Modelo livre ── */}
       <Text style={[styles.secaoLabel, { marginTop: 20 }]}>MODELO</Text>
       <TextInput
         style={[styles.input, erros.modelo ? styles.inputErro : null]}
@@ -134,7 +133,6 @@ export default function SearchScreen() {
       />
       {erros.modelo && <Text style={styles.erroTexto}>{erros.modelo}</Text>}
 
-      {/* ── Versão ── */}
       <Text style={[styles.secaoLabel, { marginTop: 20 }]}>VERSÃO (opcional)</Text>
       <TextInput
         style={styles.input}
@@ -145,7 +143,6 @@ export default function SearchScreen() {
         autoCapitalize="words"
       />
 
-      {/* ── Ano ── */}
       <Text style={[styles.secaoLabel, { marginTop: 20 }]}>ANO (opcional)</Text>
       <TextInput
         style={styles.input}
@@ -157,7 +154,6 @@ export default function SearchScreen() {
         maxLength={4}
       />
 
-      {/* ── Botão ── */}
       <TouchableOpacity
         style={[styles.botao, buscando && styles.botaoInativo]}
         onPress={buscar}
@@ -166,7 +162,7 @@ export default function SearchScreen() {
       >
         {buscando ? (
           <View style={styles.botaoConteudo}>
-            <ActivityIndicator color={COLORS.black} size="small" />
+            <ActivityIndicator color={COLORS.onAccent} size="small" />
             <Text style={styles.botaoTexto}>Gerando ficha...</Text>
           </View>
         ) : (
@@ -174,15 +170,18 @@ export default function SearchScreen() {
         )}
       </TouchableOpacity>
 
-      <Text style={styles.dica}>
-        💡 Ford Ranger Raptor retorna ficha 100% completa como validação
-      </Text>
+      <View style={styles.dicaLinha}>
+        <Ionicons name="bulb-outline" size={14} color={COLORS.textMuted} />
+        <Text style={styles.dica}>
+          Ford Ranger Raptor retorna ficha 100% completa como validação
+        </Text>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  scroll: { flex: 1, backgroundColor: COLORS.background },
+  scroll: { flex: 1, backgroundColor: COLORS.bg },
   container: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 48 },
 
   secaoLabel: {
@@ -193,31 +192,26 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  // Chips de marca
   chipsScroll: { marginBottom: 12 },
   chipsRow: { flexDirection: 'row', gap: 8, paddingRight: 4 },
   chip: {
     paddingHorizontal: 14,
     paddingVertical: 7,
-    borderRadius: 20,
+    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
   },
   chipAtivo: {
-    backgroundColor: COLORS.fordYellow,
-    borderColor: COLORS.fordYellow,
+    backgroundColor: COLORS.accent,
   },
   chipTexto: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary },
-  chipTextoAtivo: { color: COLORS.black },
+  chipTextoAtivo: { color: COLORS.onAccent },
 
-  // Input
   input: {
     height: 48,
     backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 8,
+    borderColor: COLORS.transparent,
+    borderRadius: RADIUS.sm,
     paddingHorizontal: 14,
     fontSize: 14,
     color: COLORS.textPrimary,
@@ -226,32 +220,29 @@ const styles = StyleSheet.create({
   inputErro: { borderColor: COLORS.error },
   erroTexto: { fontSize: 12, color: COLORS.error, marginBottom: 4 },
 
-  // Modelos sugeridos
+  modelosLista: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.md,
+    overflow: 'hidden',
+  },
+  modeloSeparador: { height: StyleSheet.hairlineWidth, backgroundColor: COLORS.divider },
   modeloItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 14,
-    backgroundColor: COLORS.surface,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    marginBottom: 6,
   },
   modeloItemAtivo: {
-    borderColor: COLORS.fordYellow,
-    backgroundColor: COLORS.surfaceAlt,
+    backgroundColor: COLORS.surfaceElevated,
   },
   modeloTexto: { fontSize: 14, color: COLORS.textPrimary },
-  modeloTextoAtivo: { color: COLORS.fordYellow, fontWeight: '700' },
-  checkmark: { fontSize: 14, color: COLORS.fordYellow, fontWeight: '700' },
+  modeloTextoAtivo: { color: COLORS.accent, fontWeight: '700' },
 
-  // Botão
   botao: {
     height: 54,
-    backgroundColor: COLORS.fordYellow,
-    borderRadius: 10,
+    backgroundColor: COLORS.accent,
+    borderRadius: RADIUS.lg,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 28,
@@ -259,9 +250,11 @@ const styles = StyleSheet.create({
   },
   botaoInativo: { opacity: 0.7 },
   botaoConteudo: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  botaoTexto: { fontSize: 16, fontWeight: '700', color: COLORS.black, letterSpacing: 0.3 },
+  botaoTexto: { fontSize: 16, fontWeight: '700', color: COLORS.onAccent, letterSpacing: 0.3 },
 
+  dicaLinha: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   dica: {
+    flexShrink: 1,
     fontSize: 12,
     color: COLORS.textMuted,
     textAlign: 'center',

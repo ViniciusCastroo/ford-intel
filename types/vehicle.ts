@@ -1,10 +1,7 @@
-// Valor de especificação técnica — null = "Não disponível" na UI
 export type SpecValue = string | number | null;
 
-// Categoria do veículo
 export type VehicleCategory = 'pickup' | 'suv' | 'sedan' | 'hatch' | 'outro';
 
-// Ficha técnica padronizada — SEMPRE o mesmo formato
 export interface TechSpecSheet {
   id: string;
   createdAt: string;
@@ -74,7 +71,6 @@ export interface TechSpecSheet {
   };
 }
 
-// Input do usuário na busca
 export interface BuscaVeiculo {
   marca: string;
   modelo: string;
@@ -82,7 +78,6 @@ export interface BuscaVeiculo {
   ano?: number;
 }
 
-// Registro salvo no histórico
 export interface BuscaSalva {
   id: string;
   input: BuscaVeiculo;
@@ -91,7 +86,6 @@ export interface BuscaSalva {
   favorito: boolean;
 }
 
-// Alerta de preço ativo para um veículo
 export interface AlertaPreco {
   fichaId: string;
   notificationId: string;

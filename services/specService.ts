@@ -1,19 +1,12 @@
-// Serviço de especificações — monta a TechSpecSheet completa
-// 1. Verifica mock disponível → retorna dados completos
-// 2. Tenta preço real na API FIPE
-// 3. SEMPRE retorna todos os campos — null quando não sabe
-
 import { TODOS_OS_MOCKS } from '../constants/mockData';
 import * as fipeService from './fipeService';
 import type { BuscaVeiculo, TechSpecSheet, VehicleCategory } from '../types/vehicle';
+import { normalizarTexto } from '../utils/format';
 
-// Verifica se dois nomes são parecidos (ignora maiúsculas e acentos)
 function parecido(a: string, b: string): boolean {
-  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-  return norm(a).includes(norm(b)) || norm(b).includes(norm(a));
+  return normalizarTexto(a).includes(normalizarTexto(b)) || normalizarTexto(b).includes(normalizarTexto(a));
 }
 
-// Infere a categoria pelo nome do modelo
 function inferirCategoria(modelo: string): VehicleCategory {
   const m = modelo.toLowerCase();
   if (['ranger', 'hilux', 'amarok', 'l200', 's10', 'frontier', 'ram', 'maverick', 'triton'].some((x) => m.includes(x))) return 'pickup';
@@ -23,7 +16,6 @@ function inferirCategoria(modelo: string): VehicleCategory {
   return 'outro';
 }
 
-// Conta campos SpecValue preenchidos (não null)
 function contarCampos(ficha: TechSpecSheet): { preenchidos: number; total: number } {
   const secoes = [ficha.motor, ficha.dimensoes, ficha.eficiencia, ficha.seguranca, ficha.tecnologia, ficha.preco];
   let total = 0;
@@ -37,29 +29,36 @@ function contarCampos(ficha: TechSpecSheet): { preenchidos: number; total: numbe
   return { preenchidos, total };
 }
 
-// Gera a ficha técnica completa para um veículo
+async function consultarFipe(
+  marca: string,
+  modelo: string,
+  versao: string,
+  ano?: number,
+): Promise<{ preco: number | null; referencia: string | null }> {
+  try {
+    return await fipeService.encontrarVeiculo(marca, modelo, versao, ano);
+  } catch {
+    return { preco: null, referencia: null };
+  }
+}
+
 export async function gerarFicha(input: BuscaVeiculo): Promise<TechSpecSheet> {
   const id = `${Date.now()}`;
   const agora = new Date().toISOString();
 
-  // 1. Verifica se há mock para este veículo (match por marca + modelo)
   const mock = TODOS_OS_MOCKS.find(
     (m) => parecido(m.veiculo.marca, input.marca) && parecido(m.veiculo.modelo, input.modelo),
   );
 
   if (mock) {
-    // Atualiza preço FIPE em tempo real (não bloqueia se API falhar)
-    let precoAtual = mock.preco;
-    let fontePreco = mock.metadata.fonte;
-    try {
-      const resultado = await fipeService.encontrarVeiculo(input.marca, input.modelo);
-      if (resultado.preco) {
-        precoAtual = { fipe: resultado.preco, referencia: resultado.referencia };
-        fontePreco = 'fipe';
-      }
-    } catch {
-      // Mantém preço do mock se API falhar
-    }
+    const fipe = await consultarFipe(
+      mock.veiculo.marca,
+      mock.veiculo.modelo,
+      input.versao || mock.veiculo.versao,
+      input.ano ?? mock.veiculo.ano ?? undefined,
+    );
+    const precoAtual = fipe.preco ? { fipe: fipe.preco, referencia: fipe.referencia } : mock.preco;
+    const fontePreco = fipe.preco ? 'fipe' : mock.metadata.fonte;
 
     const ficha: TechSpecSheet = {
       ...mock,
@@ -77,16 +76,12 @@ export async function gerarFicha(input: BuscaVeiculo): Promise<TechSpecSheet> {
     return { ...ficha, metadata: { ...ficha.metadata, campos_preenchidos: preenchidos, total_campos: total } };
   }
 
-  // 2. Sem mock — busca preço na FIPE e monta ficha com campos null
-  let preco = null;
-  let referencia = null;
-  try {
-    const resultado = await fipeService.encontrarVeiculo(input.marca, input.modelo);
-    preco = resultado.preco;
-    referencia = resultado.referencia;
-  } catch {
-    // API indisponível — ficha parcial
-  }
+  const { preco, referencia } = await consultarFipe(
+    input.marca,
+    input.modelo,
+    input.versao,
+    input.ano,
+  );
 
   const ficha: TechSpecSheet = {
     id,

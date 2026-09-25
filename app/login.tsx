@@ -1,4 +1,3 @@
-// Tela de login — credenciais mock analista@ford.com / ford2026
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -12,7 +11,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { COLORS } from '../constants/colors';
+import { FordLogo } from '../components/ui/FordLogo';
+import { COLORS, RADIUS } from '../constants/colors';
 import { useAuthStore } from '../store/authStore';
 
 export default function LoginScreen() {
@@ -45,16 +45,11 @@ export default function LoginScreen() {
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Logo Ford — oval azul */}
         <View style={styles.logoArea}>
-          <View style={styles.oval}>
-            <Text style={styles.ovalTexto}>FORD</Text>
-          </View>
-          <Text style={styles.appNome}>Ford Intel</Text>
+          <FordLogo height={88} />
           <Text style={styles.appSub}>INTELIGÊNCIA COMPETITIVA AUTOMOTIVA</Text>
         </View>
 
-        {/* Formulário */}
         <View style={styles.form}>
           <Text style={styles.formTitulo}>Entrar</Text>
 
@@ -100,7 +95,7 @@ export default function LoginScreen() {
             activeOpacity={0.8}
           >
             {carregando
-              ? <ActivityIndicator color={COLORS.white} size="small" />
+              ? <ActivityIndicator color={COLORS.onAccent} size="small" />
               : <Text style={styles.botaoTexto}>Entrar</Text>
             }
           </TouchableOpacity>
@@ -113,7 +108,7 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: COLORS.background },
+  flex: { flex: 1, backgroundColor: COLORS.bg },
   container: {
     flexGrow: 1,
     justifyContent: 'center',
@@ -121,20 +116,9 @@ const styles = StyleSheet.create({
     paddingVertical: 48,
   },
 
-  // Logo
   logoArea: { alignItems: 'center', marginBottom: 44 },
-  oval: {
-    backgroundColor: COLORS.fordBlue,
-    borderRadius: 28,
-    paddingHorizontal: 22,
-    paddingVertical: 8,
-    borderWidth: 2,
-    borderColor: COLORS.fordBlueMid,
-    marginBottom: 16,
-  },
-  ovalTexto: { fontSize: 20, fontWeight: '800', color: COLORS.white, letterSpacing: 4 },
-  appNome: { fontSize: 28, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 6 },
   appSub: {
+    marginTop: 20,
     fontSize: 11,
     fontWeight: '600',
     color: COLORS.textMuted,
@@ -142,13 +126,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // Formulário
   form: {
     backgroundColor: COLORS.surface,
-    borderRadius: 12,
+    borderRadius: RADIUS.lg,
     padding: 24,
-    borderWidth: 1,
-    borderColor: COLORS.border,
   },
   formTitulo: {
     fontSize: 22,
@@ -166,36 +147,33 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 48,
-    backgroundColor: COLORS.surfaceAlt,
+    backgroundColor: COLORS.surfaceElevated,
     borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 8,
+    borderColor: COLORS.transparent,
+    borderRadius: RADIUS.sm,
     paddingHorizontal: 14,
     fontSize: 14,
     color: COLORS.textPrimary,
   },
   inputErro: { borderColor: COLORS.error },
 
-  // Erro
   erroTexto: {
     color: COLORS.error,
     fontSize: 13,
     marginBottom: 12,
   },
 
-  // Botão
   botao: {
     height: 52,
-    backgroundColor: COLORS.fordBlue,
-    borderRadius: 8,
+    backgroundColor: COLORS.accent,
+    borderRadius: RADIUS.lg,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 8,
   },
   botaoInativo: { opacity: 0.6 },
-  botaoTexto: { fontSize: 16, fontWeight: '700', color: COLORS.white, letterSpacing: 0.5 },
+  botaoTexto: { fontSize: 16, fontWeight: '700', color: COLORS.onAccent, letterSpacing: 0.5 },
 
-  // Dica
   dica: {
     fontSize: 12,
     color: COLORS.textMuted,
